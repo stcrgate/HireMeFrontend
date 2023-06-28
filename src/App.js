@@ -5,6 +5,7 @@ import About from "./components/About";
 import AddJob from "./components/AddJob";
 import ViewJob from "./components/ViewJob";
 import Admin from "./components/Admin";
+import UpdateJob from "./components/UpdateJob";
 
 function App() {
     return (
@@ -18,6 +19,7 @@ function App() {
                         <Route path="/add" element={<AddJob />} />
                         <Route path="/view" element={<ViewJob />} />
                         <Route path="/admin" element={<Admin />} />
+                        <Route path="/update" element={<UpdateJob />} />
                     </Routes>
                 </Router>
             </>

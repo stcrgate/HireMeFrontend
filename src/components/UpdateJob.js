@@ -1,5 +1,7 @@
-import React, { useState , useLocation , useEffect} from "react";
-import { useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
+
 const UpdateJob = () => {
     const skillSet = [
         {
@@ -18,19 +20,24 @@ const UpdateJob = () => {
             name: "Rust",
         },
     ];
-    const location = useLocation();
+
     const [data, setData] = useState({
-        title: "",
+        id:"",
+        profile: "",
         desc: "",
         exp: "",
         techs: [],
     });
 
+    const location = useLocation();
+    const navigate = useNavigate();
+    
     useEffect(() => {
         if (location.state && location.state.job) {
             const jobData = location.state.job;
             setData({
-                title: jobData.title || "",
+                id:jobData.id,
+                profile: jobData.profile || "",
                 desc: jobData.desc || "",
                 exp: jobData.exp || "",
                 techs: jobData.techs || [],
@@ -42,25 +49,34 @@ const UpdateJob = () => {
         setData({ ...data, techs: [...data.techs, e.target.value] });
     };
 
-    const handleSubmit = async (e, data) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(data.title + data.desc + data.exp + data.techs);
-        const response = await fetch(`http://localhost:8080/updatejob/${data.id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                profile: data.title,
-                desc: data.desc,
-                exp: data.exp,
-                techs: data.techs,
-            }),
-        });
-        const dataJson = await response.json();
-        console.log(dataJson);
-        setData({ title: "", desc: "", exp: "", techs: [] });
+        console.log(data.id+data.profile + data.desc + data.exp + data.techs);
+        const response = await fetch(
+            `http://localhost:8080/updatejob/${data.id}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    profile: data.profile,
+                    desc: data.desc,
+                    exp: data.exp,
+                    techs: data.techs,
+                }),
+            }
+        );
+        if (response.ok) {
+            const dataJson = await response.json();
+            console.log(dataJson);
+            setData({ profile: "", desc: "", exp: "", techs: [] });
+            navigate("/admin")
+        } else {
+            console.error("Error updating job");
+        }
     };
+
     const onChange = (e) => {
         setData({ ...data, [e.target.name]: e.target.value });
     };
@@ -79,10 +95,10 @@ const UpdateJob = () => {
                         <input
                             type="text"
                             className="form-control my-3"
-                            id="title"
-                            name="title"
+                            id="profile"
+                            name="profile"
                             placeholder="John Doe"
-                            value={data.title}
+                            value={data.profile}
                             onChange={onChange}
                         />
                         <label htmlFor="floatingInput">Job Title</label>
@@ -143,7 +159,7 @@ const UpdateJob = () => {
                                 className="btn btn-success w-100 py-2"
                                 type="submit"
                             >
-                                Add Job
+                                Update Job
                             </button>
                         </div>
                         <div className="col">

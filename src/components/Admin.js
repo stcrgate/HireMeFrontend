@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 
 const Admin = () => {
+    const navigate = useNavigate();
+
     const url = "http://localhost:8080/alljobs";
     const [data, setData] = useState([]);
 
@@ -32,14 +34,14 @@ const Admin = () => {
             })
             .catch((error) => console.error(error));
     };
-    const handleUpdate = () =>{
-
-    }
+    const handleUpdate = (dataObj) => {
+        navigate("/update", { state: { job: dataObj } });
+    };
     return (
         <>
             <div className="container">
                 <h1 className="text-center my-5">All Jobs</h1>
-                <table class="table">
+                <table className="table">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -59,7 +61,7 @@ const Admin = () => {
                                     <td>{dataObj.desc}</td>
                                     <td>
                                         {dataObj.techs.map((hobby, index) => (
-                                            <span class="badge bg-secondary p-2 m-1">
+                                            <span className="badge bg-secondary p-2 m-1">
                                                 {hobby}
                                             </span>
                                         ))}
@@ -68,9 +70,11 @@ const Admin = () => {
                                         <button
                                             className="btn btn-info"
                                             onClick={() =>
-                                                handleUpdate(dataObj.id)
+                                                handleUpdate(dataObj)
                                             }
-                                        >Update</button>
+                                        >
+                                            Update
+                                        </button>
                                     </td>
                                     <td>
                                         <button
@@ -78,7 +82,9 @@ const Admin = () => {
                                             onClick={() =>
                                                 handleDelete(dataObj.id)
                                             }
-                                        >Delete</button>
+                                        >
+                                            Delete
+                                        </button>
                                     </td>
                                 </tr>
                             );
