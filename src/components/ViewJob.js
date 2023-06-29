@@ -6,7 +6,7 @@ const ViewJob = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredJobs, setFilteredJobs] = useState([]);
   
-  const fetchInfo = () => {
+  const fetchprimary = () => {
       let apiUrl = "http://localhost:8080/alljobs";
       if (searchQuery !== "") {
           apiUrl = `http://localhost:8080/search/${searchQuery}`;
@@ -19,7 +19,7 @@ const ViewJob = () => {
   };
   
   useEffect(() => {
-      fetchInfo();
+      fetchprimary();
   }, [searchQuery]);
   
   return (
@@ -53,19 +53,32 @@ const ViewJob = () => {
                           <div className="col-lg-3 col-md-6 col-sm-12 mt-3">
                               <div class="card">
                                   <div class="card-body">
-                                      <h3 class="card-title text-info fw-bolder">
-                                          {dataObj.profile
-                                              .charAt(0)
-                                              .toUpperCase() +
-                                              dataObj.profile.slice(1)}
-                                      </h3>
-                                      <h5 class="card-title">
+                                      <div className="row d-flex align-items-center">
+                                          <div className="col">
+                                            <img src={dataObj.companyLogo} alt="!Logo Not Found!" className="img-fluid" />
+                                          </div>
+                                          <div className="col">
+                                            <h3 class="card-title text-primary fw-bolder">
+                                                {dataObj.profile
+                                                    .charAt(0)
+                                                    .toUpperCase() +
+                                                    dataObj.profile.slice(1)}
+                                            </h3>
+                                            <h5 class="card-title fw-bold">
+                                                Salary : {dataObj.salary}
+                                            </h5>
+                                          </div>
+                                      </div>
+                                      <h6 class="card-title">
+                                          Company Name : {dataObj.companyName}
+                                      </h6>
+                                      <h6 class="card-title">
                                           Exprience : {dataObj.exp}
-                                      </h5>
+                                      </h6>
                                       <p class="card-text">{dataObj.desc}</p>
                                       <h6>Skills</h6>
                                       {dataObj.techs.map((hobby, index) => (
-                                          <span class="badge text-white fw-bold bg-info p-2 m-1">
+                                          <span class="badge text-white fw-bold bg-primary p-2 m-1">
                                               {hobby.charAt(0).toUpperCase() +
                                                   hobby.slice(1)}
                                           </span>

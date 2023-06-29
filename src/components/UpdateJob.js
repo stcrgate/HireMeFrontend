@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import { AuthContext } from "../context/AuthContext";
+import { useContext } from "react";
 
 const UpdateJob = () => {
+    const { user } = useContext(AuthContext);
+
     const skillSet = [
         {
             name: "Javascript",
@@ -21,13 +24,17 @@ const UpdateJob = () => {
         },
     ];
 
-    const [data, setData] = useState({
-        id:"",
-        profile: "",
-        desc: "",
-        exp: "",
-        techs: [],
-    });
+      const [data, setData] = useState({
+          profile: "",
+          desc: "",
+          exp: "",
+          techs: [],
+          companyName: "",
+          salary: "",
+          companyLogo: "",
+          createdBy: "",
+      });
+
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -36,11 +43,15 @@ const UpdateJob = () => {
         if (location.state && location.state.job) {
             const jobData = location.state.job;
             setData({
-                id:jobData.id,
+                id: jobData.id,
                 profile: jobData.profile || "",
                 desc: jobData.desc || "",
                 exp: jobData.exp || "",
                 techs: jobData.techs || [],
+                companyName: jobData.companyName,
+                salary: jobData.salary,
+                companyLogo: jobData.companyLogo,
+                createdBy: user.id,
             });
         }
     }, [location.state]);
@@ -64,16 +75,32 @@ const UpdateJob = () => {
                     desc: data.desc,
                     exp: data.exp,
                     techs: data.techs,
+                    salary: data.salary,
+                    companyName: data.companyName,
+                    companyLogo: data.companyLogo,
+                    createdBy: user.id,
                 }),
             }
         );
         if (response.ok) {
             const dataJson = await response.json();
             console.log(dataJson);
-            setData({ profile: "", desc: "", exp: "", techs: [] });
+                    setData({
+                        profile: "",
+                        desc: "",
+                        exp: "",
+                        techs: [],
+                        salary: "",
+                        companyName: "",
+                        companyLogo: "",
+                        createdBy: "",
+                    });
+
             navigate("/admin")
         } else {
             console.error("Error updating job");
+            navigate("/admin");
+
         }
     };
 
@@ -90,18 +117,71 @@ const UpdateJob = () => {
                     onSubmit={handleSubmit}
                 >
                     <h1 className="h3 mb-2">Enter Job Details</h1>
-
-                    <div className="form-floating">
-                        <input
-                            type="text"
-                            className="form-control my-3"
-                            id="profile"
-                            name="profile"
-                            placeholder="John Doe"
-                            value={data.profile}
-                            onChange={onChange}
-                        />
-                        <label htmlFor="floatingInput">Job Title</label>
+                    <div className="row">
+                        <div className="col-lg-6 col-md-12">
+                            <div className="form-floating">
+                                <input
+                                    type="text"
+                                    className="form-control my-3"
+                                    id="profile"
+                                    name="profile"
+                                    placeholder="John Doe"
+                                    value={data.profile}
+                                    onChange={onChange}
+                                />
+                                <label htmlFor="floatingInput">Job Title</label>
+                            </div>
+                        </div>
+                        <div className="col-lg-6 col-md-12">
+                            <div className="form-floating">
+                                <input
+                                    type="text"
+                                    className="form-control my-3"
+                                    id="companyName"
+                                    name="companyName"
+                                    placeholder="John Doe"
+                                    value={data.companyName}
+                                    onChange={onChange}
+                                />
+                                <label htmlFor="floatingInput">
+                                    Company Name
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-lg-6 col-md-12">
+                            <div className="form-floating">
+                                <input
+                                    type="text"
+                                    className="form-control my-3"
+                                    id="salary"
+                                    name="salary"
+                                    placeholder="John Doe"
+                                    value={data.salary}
+                                    onChange={onChange}
+                                />
+                                <label htmlFor="floatingInput">
+                                    Expected Salary
+                                </label>
+                            </div>
+                        </div>
+                        <div className="col-lg-6 col-md-12">
+                            <div className="form-floating">
+                                <input
+                                    type="text"
+                                    className="form-control my-3"
+                                    id="exp"
+                                    name="exp"
+                                    placeholder="John Doe"
+                                    value={data.exp}
+                                    onChange={onChange}
+                                />
+                                <label htmlFor="floatingInput">
+                                    Exprience Required
+                                </label>
+                            </div>
+                        </div>
                     </div>
                     <div className="form-floating">
                         <textarea
@@ -119,15 +199,13 @@ const UpdateJob = () => {
                         <input
                             type="text"
                             className="form-control my-3"
-                            id="exp"
-                            name="exp"
+                            id="companyLogo"
+                            name="companyLogo"
+                            value={data.companyLogo}
                             placeholder="John Doe"
-                            value={data.exp}
                             onChange={onChange}
                         />
-                        <label htmlFor="floatingInput">
-                            Exprience Required
-                        </label>
+                        <label htmlFor="floatingInput">Company Logo URL</label>
                     </div>
                     <label>Skills Required</label>
                     <div className="row mt-3">
@@ -166,6 +244,10 @@ const UpdateJob = () => {
                             <button
                                 className="btn btn-danger w-100 py-2"
                                 type="reset"
+                                onClick={(e)=>{
+                                    e.preventDefault();
+                                    navigate("/admin");
+                                }}
                             >
                                 Cancel
                             </button>

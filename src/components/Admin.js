@@ -1,18 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 const Admin = () => {
     const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
 
-    const url = "http://localhost:8080/alljobs";
     const [data, setData] = useState([]);
-
+    
     const fetchInfo = () => {
-        return fetch(url, {
-            method: "GET",
-        })
+        if (!user) {
+            return;
+        }
+        else{
+            const url = `http://localhost:8080/jobposted/${user.id}`;
+            return fetch(url, {
+                method: "GET",
+            })
             .then((res) => res.json())
             .then((d) => setData(d));
+        }
     };
 
     useEffect(() => {
@@ -37,63 +45,69 @@ const Admin = () => {
     const handleUpdate = (dataObj) => {
         navigate("/update", { state: { job: dataObj } });
     };
-    return (
+    
+    if (!user) {
+      return (
         <>
-            <div className="container">
-                <h1 className="text-center my-5">All Jobs</h1>
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Job Title</th>
-                            <th scope="col">Job Desc</th>
-                            <th scope="col">Skills</th>
-                            <th scope="col">Update</th>
-                            <th scope="col">Delete</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map((dataObj,index) => {
-                            return (
-                                <tr key={index}>
-                                    <th scope="row">{index + 1}</th>
-                                    <td>{dataObj.profile}</td>
-                                    <td>{dataObj.desc}</td>
-                                    <td>
-                                        {dataObj.techs.map((hobby, index) => (
-                                            <span className="badge bg-secondary p-2 m-1">
-                                                {hobby}
-                                            </span>
-                                        ))}
-                                    </td>
-                                    <td>
-                                        <button
-                                            className="btn btn-info"
-                                            onClick={() =>
-                                                handleUpdate(dataObj)
-                                            }
-                                        >
-                                            Update
-                                        </button>
-                                    </td>
-                                    <td>
-                                        <button
-                                            className="btn btn-danger"
-                                            onClick={() =>
-                                                handleDelete(dataObj.id)
-                                            }
-                                        >
-                                            Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
+            <h1 className="text-center my-5">Please Sign up or Login to access this Admin Page</h1>
         </>
-    );
+        )
+    }
+    else{
+        return (
+            <>
+                <div className="container">
+                    <h1 className="text-center my-5">All Jobs</h1>
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Job Title</th>
+                                <th scope="col">Company Name</th>
+                                <th scope="col">Salary</th>
+                                <th scope="col">Experience</th>
+                                <th scope="col">Update</th>
+                                <th scope="col">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {data.map((dataObj, index) => {
+                                return (
+                                    <tr key={index}>
+                                        <th scope="row">{index + 1}</th>
+                                        <td>{dataObj.profile}</td>
+                                        <td>{dataObj.companyName}</td>
+                                        <td>{dataObj.salary}</td>
+                                        <td>{dataObj.exp}</td>
+                                        <td>
+                                            <button
+                                                className="btn btn-info"
+                                                onClick={() =>
+                                                    handleUpdate(dataObj)
+                                                }
+                                            >
+                                                Update
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button
+                                                className="btn btn-danger"
+                                                onClick={() =>
+                                                    handleDelete(dataObj.id)
+                                                }
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            </>
+        );
+    }
 };
 
 export default Admin;
